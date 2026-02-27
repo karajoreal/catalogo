@@ -1,6 +1,7 @@
 // URL base de la API
-// Local: el proxy de Vite redirige /api → localhost:3002 automáticamente
-// Producción: apunta al dominio de EasyPanel del servicio catalogo-api
-const API_URL = import.meta.env.VITE_API_URL || 'https://next-catalogo-api.bzupwx.easypanel.host'
+// Local: Vite proxy redirige /api → localhost:3002
+// Producción: Nginx proxy redirige /api → backend (sin CORS)
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 export default API_URL
+
