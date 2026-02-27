@@ -18,11 +18,13 @@ app.use(cors({
         'http://localhost:5174',
         'http://localhost:5173',
         'http://localhost:3000',
-        'https://catalogohub.tendence.io',
+        'https://next-catalogo-client.bzupwx.easypanel.host',
+        'https://next-catalogo-api.bzupwx.easypanel.host',
         'http://82.180.128.1'
     ],
     credentials: true,
 }));
+
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
