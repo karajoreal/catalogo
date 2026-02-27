@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
+import API_URL from '../config'
 
 // PDF worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
@@ -23,7 +24,7 @@ export default function CatalogoViewer() {
     useEffect(() => {
         const fetchCatalogo = async () => {
             try {
-                const res = await fetch(`/api/catalogos/${id}`)
+                const res = await fetch(`${API_URL}/api/catalogos/${id}`)
                 if (!res.ok) throw new Error('Catálogo no encontrado')
                 const data = await res.json()
                 setCatalogo(data)

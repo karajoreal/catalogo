@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import API_URL from '../config'
 
-const API = '/api'
+const API = `${API_URL}/api`
 
 export default function Admin() {
     const { admin, logout, getToken } = useAuth()
@@ -274,7 +275,7 @@ function MarcasTab({ marcas, headers, fetchAll, showToast }) {
     const handleAdd = async (e) => {
         e.preventDefault()
         try {
-            const res = await fetch('/api/marcas', { method: 'POST', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+            const res = await fetch(`${API}/marcas`, { method: 'POST', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
             if (!res.ok) throw new Error((await res.json()).error)
             showToast('✅ Marca agregada')
             setForm({ nombre: '', slug: '', descripcion: '' })
@@ -335,7 +336,7 @@ function TemporadasTab({ temporadas, headers, fetchAll, showToast }) {
     const handleAdd = async (e) => {
         e.preventDefault()
         try {
-            const res = await fetch('/api/temporadas', { method: 'POST', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+            const res = await fetch(`${API}/temporadas`, { method: 'POST', headers: { ...headers(), 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
             if (!res.ok) throw new Error((await res.json()).error)
             showToast('✅ Temporada agregada')
             setForm({ nombre: '', slug: '', anio: new Date().getFullYear().toString(), descripcion: '' })

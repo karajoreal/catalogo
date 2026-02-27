@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FilterBar from '../components/FilterBar'
 import CatalogoCard from '../components/CatalogoCard'
+import API_URL from '../config'
 
-const API = '/api'
+const API = `${API_URL}/api`
 
 export default function Home() {
     const navigate = useNavigate()
