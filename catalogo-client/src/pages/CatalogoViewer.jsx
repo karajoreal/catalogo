@@ -115,28 +115,51 @@ export default function CatalogoViewer() {
                             <Document
                                 file={catalogo.pdf_url}
                                 onLoadSuccess={onDocumentLoadSuccess}
-                                loading={<div className="loading" style={{ width: '920px', height: '640px' }}><div className="spinner" /></div>}
+                                loading={<div className="pdf-loading"><div className="spinner" /></div>}
                                 error={<div style={{ color: 'var(--danger)', padding: '2rem' }}>Error al cargar el PDF</div>}
                             >
-                                {/* Left page */}
-                                <div className="book-page book-page-left">
-                                    {leftPageNum <= (numPages || 0) ? (
-                                        <Page pageNumber={leftPageNum} height={640} renderTextLayer={false} renderAnnotationLayer={false} />
-                                    ) : (
-                                        <div style={{ width: 460, height: 640, background: '#f8f5ef' }} />
-                                    )}
-                                </div>
-                                {/* Right page */}
-                                <div className="book-page book-page-right">
-                                    {rightPageNum <= (numPages || 0) ? (
-                                        <Page pageNumber={rightPageNum} height={640} renderTextLayer={false} renderAnnotationLayer={false} />
-                                    ) : (
-                                        <div style={{ width: 460, height: 640, background: '#f8f5ef' }} />
-                                    )}
+                                {/* Wrapper flex para side-by-side */}
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'flex-start',
+                                    gap: 0,
+                                    boxShadow: '0 20px 80px rgba(0,0,0,0.8)',
+                                    borderRadius: '2px 8px 8px 2px',
+                                    overflow: 'hidden'
+                                }}>
+                                    {/* Página izquierda */}
+                                    <div className="book-page book-page-left">
+                                        {leftPageNum <= (numPages || 0) ? (
+                                            <Page
+                                                pageNumber={leftPageNum}
+                                                height={620}
+                                                renderTextLayer={false}
+                                                renderAnnotationLayer={false}
+                                            />
+                                        ) : (
+                                            <div style={{ width: 440, height: 620, background: '#f8f5ef' }} />
+                                        )}
+                                    </div>
+                                    {/* Separador (lomo del libro) */}
+                                    <div style={{ width: 4, background: 'linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0.05))', alignSelf: 'stretch', flexShrink: 0 }} />
+                                    {/* Página derecha */}
+                                    <div className="book-page book-page-right">
+                                        {rightPageNum <= (numPages || 0) ? (
+                                            <Page
+                                                pageNumber={rightPageNum}
+                                                height={620}
+                                                renderTextLayer={false}
+                                                renderAnnotationLayer={false}
+                                            />
+                                        ) : (
+                                            <div style={{ width: 440, height: 620, background: '#f8f5ef' }} />
+                                        )}
+                                    </div>
                                 </div>
                             </Document>
                         ) : (
-                            <div style={{ width: 920, height: 640, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: '#1a1a2e', borderRadius: 4 }}>
+                            <div style={{ width: 884, height: 620, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: '#1a1a2e', borderRadius: 4 }}>
                                 PDF no disponible
                             </div>
                         )}
