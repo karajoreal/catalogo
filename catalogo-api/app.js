@@ -44,6 +44,23 @@ app.get('/api/health', (req, res) => res.json({
     time: new Date()
 }));
 
+// ⚠️ SETUP TEMPORAL — crea/resetea el admin con hash correcto
+// Acceder UNA VEZ en: /api/setup-admin  — luego se puede eliminar
+app.get('/api/setup-admin', async (req, res) => {
+    const bcrypt = require('bcryptjs');
+    const db = require('./src/db');
+    const email = 'admin@catalogohub.com';
+    const password = 'Admin123!';
+    const hash = await bcrypt.hash(password, 10);
+    await db.query(
+        `INSERT INTO admins (nombre, email, password_hash, activo) VALUES (?,?,?,1)
+         ON DUPLICATE KEY UPDATE password_hash=?, activo=1`,
+        ['Administrador', email, hash, hash]
+    );
+    res.json({ ok: true, message: `Admin creado. Email: ${email} | Password: ${password}` });
+});
+
+
 // Error handler global
 app.use((err, req, res, next) => {
     console.error('❌ Error:', err.message);
