@@ -271,6 +271,7 @@ export default function Admin() {
 function MarcasTab({ marcas, headers, fetchAll, showToast }) {
     const [form, setForm] = useState({ nombre: '', slug: '', descripcion: '' })
     const slugify = (s) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+    const API = `${API_URL}/api`
 
     const handleAdd = async (e) => {
         e.preventDefault()
@@ -279,6 +280,15 @@ function MarcasTab({ marcas, headers, fetchAll, showToast }) {
             if (!res.ok) throw new Error((await res.json()).error)
             showToast('✅ Marca agregada')
             setForm({ nombre: '', slug: '', descripcion: '' })
+            fetchAll()
+        } catch (e) { showToast('❌ ' + e.message, 'error') }
+    }
+
+    const handleDelete = async (id, nombre) => {
+        if (!confirm(`¿Eliminar la marca "${nombre}"? Si tiene catálogos asociados también se eliminarán.`)) return
+        try {
+            await fetch(`${API}/marcas/${id}`, { method: 'DELETE', headers: headers() })
+            showToast('🗑️ Marca eliminada')
             fetchAll()
         } catch (e) { showToast('❌ ' + e.message, 'error') }
     }
@@ -312,17 +322,22 @@ function MarcasTab({ marcas, headers, fetchAll, showToast }) {
                 <h2 style={{ marginBottom: '1.25rem', fontSize: '1.1rem' }}>Marcas ({marcas.length})</h2>
                 <div className="table-wrap">
                     <table>
-                        <thead><tr><th>Nombre</th><th>Slug</th><th>Catálogos</th></tr></thead>
+                        <thead><tr><th>Nombre</th><th>Slug</th><th>Catálogos</th><th>Acciones</th></tr></thead>
                         <tbody>
                             {marcas.map(m => (
                                 <tr key={m.id}>
                                     <td style={{ fontWeight: 600, color: 'var(--text)' }}>{m.nombre}</td>
                                     <td style={{ fontFamily: 'monospace', fontSize: '.8rem' }}>{m.slug}</td>
                                     <td>{m.total_catalogos || 0}</td>
+                                    <td>
+                                        <button className="btn btn-danger" style={{ padding: '.3rem .7rem', fontSize: '.8rem' }}
+                                            onClick={() => handleDelete(m.id, m.nombre)}>🗑️ Eliminar</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                    {marcas.length === 0 && <div className="empty-state" style={{ padding: '2rem' }}><div className="empty-icon">🏷️</div><h3>Sin marcas todavía</h3></div>}
                 </div>
             </div>
         </div>
@@ -332,6 +347,7 @@ function MarcasTab({ marcas, headers, fetchAll, showToast }) {
 function TemporadasTab({ temporadas, headers, fetchAll, showToast }) {
     const [form, setForm] = useState({ nombre: '', slug: '', anio: new Date().getFullYear().toString(), descripcion: '' })
     const slugify = (s) => s.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+    const API = `${API_URL}/api`
 
     const handleAdd = async (e) => {
         e.preventDefault()
@@ -340,6 +356,15 @@ function TemporadasTab({ temporadas, headers, fetchAll, showToast }) {
             if (!res.ok) throw new Error((await res.json()).error)
             showToast('✅ Temporada agregada')
             setForm({ nombre: '', slug: '', anio: new Date().getFullYear().toString(), descripcion: '' })
+            fetchAll()
+        } catch (e) { showToast('❌ ' + e.message, 'error') }
+    }
+
+    const handleDelete = async (id, nombre) => {
+        if (!confirm(`¿Eliminar la temporada "${nombre}"?`)) return
+        try {
+            await fetch(`${API}/temporadas/${id}`, { method: 'DELETE', headers: headers() })
+            showToast('🗑️ Temporada eliminada')
             fetchAll()
         } catch (e) { showToast('❌ ' + e.message, 'error') }
     }
@@ -377,17 +402,22 @@ function TemporadasTab({ temporadas, headers, fetchAll, showToast }) {
                 <h2 style={{ marginBottom: '1.25rem', fontSize: '1.1rem' }}>Temporadas ({temporadas.length})</h2>
                 <div className="table-wrap">
                     <table>
-                        <thead><tr><th>Nombre</th><th>Año</th><th>Catálogos</th></tr></thead>
+                        <thead><tr><th>Nombre</th><th>Año</th><th>Catálogos</th><th>Acciones</th></tr></thead>
                         <tbody>
                             {temporadas.map(t => (
                                 <tr key={t.id}>
                                     <td style={{ fontWeight: 600, color: 'var(--text)' }}>{t.nombre}</td>
                                     <td>{t.anio}</td>
                                     <td>{t.total_catalogos || 0}</td>
+                                    <td>
+                                        <button className="btn btn-danger" style={{ padding: '.3rem .7rem', fontSize: '.8rem' }}
+                                            onClick={() => handleDelete(t.id, t.nombre)}>🗑️ Eliminar</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                    {temporadas.length === 0 && <div className="empty-state" style={{ padding: '2rem' }}><div className="empty-icon">📅</div><h3>Sin temporadas todavía</h3></div>}
                 </div>
             </div>
         </div>
