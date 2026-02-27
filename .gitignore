@@ -1,0 +1,17 @@
+# CatalogoHub — Monorepo
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# API: no subir PDFs ni imágenes de portadas al repo
+catalogo-api/uploads/
+catalogo-api/node_modules/
+
+# Frontend: no subir el build
+catalogo-client/dist/
+catalogo-client/node_modules/
+
+# Variables de entorno NUNCA al repositorio
+catalogo-api/.env
+catalogo-client/.env
