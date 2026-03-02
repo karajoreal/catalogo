@@ -117,7 +117,14 @@ export default function CatalogoViewer() {
                 </button>
 
                 {/* Book */}
-                <div className="book-container" style={{ transform: `scale(${zoom})`, transformOrigin: 'center top', transition: 'transform 0.2s ease' }}>
+                <div
+                    className="book-container"
+                    onWheel={(e) => {
+                        e.preventDefault()
+                        if (e.deltaY < 0) setZoom(z => Math.min(z + 0.15, 3))
+                        else setZoom(z => Math.max(z - 0.15, 0.4))
+                    }}
+                >
                     <div className="book" style={pageFlipStyle}>
                         {catalogo.pdf_url ? (
                             <Document
@@ -137,31 +144,31 @@ export default function CatalogoViewer() {
                                     overflow: 'hidden'
                                 }}>
                                     {/* Página izquierda */}
-                                    <div className="book-page book-page-left">
+                                    <div className="book-page book-page-left" style={{ width: Math.round(440 * zoom), height: Math.round(620 * zoom) }}>
                                         {leftPageNum <= (numPages || 0) ? (
                                             <Page
                                                 pageNumber={leftPageNum}
-                                                height={620}
+                                                height={Math.round(620 * zoom)}
                                                 renderTextLayer={false}
                                                 renderAnnotationLayer={false}
                                             />
                                         ) : (
-                                            <div style={{ width: 440, height: 620, background: '#f8f5ef' }} />
+                                            <div style={{ width: Math.round(440 * zoom), height: Math.round(620 * zoom), background: '#f8f5ef' }} />
                                         )}
                                     </div>
                                     {/* Separador (lomo del libro) */}
                                     <div style={{ width: 4, background: 'linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0.05))', alignSelf: 'stretch', flexShrink: 0 }} />
                                     {/* Página derecha */}
-                                    <div className="book-page book-page-right">
+                                    <div className="book-page book-page-right" style={{ width: Math.round(440 * zoom), height: Math.round(620 * zoom) }}>
                                         {rightPageNum <= (numPages || 0) ? (
                                             <Page
                                                 pageNumber={rightPageNum}
-                                                height={620}
+                                                height={Math.round(620 * zoom)}
                                                 renderTextLayer={false}
                                                 renderAnnotationLayer={false}
                                             />
                                         ) : (
-                                            <div style={{ width: 440, height: 620, background: '#f8f5ef' }} />
+                                            <div style={{ width: Math.round(440 * zoom), height: Math.round(620 * zoom), background: '#f8f5ef' }} />
                                         )}
                                     </div>
                                 </div>
