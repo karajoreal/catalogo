@@ -1,5 +1,6 @@
 /* CatalogoHub — Global Styles */
-/* Paleta: fondo oscuro #0A0A0F, dorado #D4AF37, glassmorphism */
+/* Paleta Corporativa Tendence: Rojo #ED1C24, Verde #A3C939, Naranja #F7941D, Azul #99D9EA */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 *,
 *::before,
@@ -10,39 +11,66 @@
 }
 
 :root {
-    --bg: #0A0A0F;
+    --bg: #0D0D0D;
     --bg-card: rgba(255, 255, 255, 0.04);
-    --bg-sidebar: #0D0D14;
-    --gold: #D4AF37;
-    --gold-light: #F0D060;
-    --gold-dim: rgba(212, 175, 55, 0.15);
-    --gold-border: rgba(212, 175, 55, 0.3);
+    --bg-sidebar: #111111;
+
+    /* Paleta Tendence */
+    --primary: #ED1C24;
+    /* Rojo */
+    --primary-light: #F7941D;
+    /* Naranja */
+    --primary-dim: rgba(237, 28, 36, 0.15);
+    --primary-border: rgba(237, 28, 36, 0.35);
+    --secondary: #A3C939;
+    /* Verde */
+    --info: #99D9EA;
+    /* Azul claro */
+
+    /* Compatibilidad con código existente */
+    --gold: #ED1C24;
+    --gold-light: #F7941D;
+    --gold-dim: rgba(237, 28, 36, 0.12);
+    --gold-border: rgba(237, 28, 36, 0.3);
+
     --text: #F5F5F5;
-    --text-muted: rgba(245, 245, 245, 0.5);
+    --text-muted: rgba(245, 245, 245, 0.55);
     --text-dim: rgba(245, 245, 245, 0.25);
     --danger: #FF4D4D;
-    --success: #4DFFB8;
-    --radius: 12px;
-    --radius-lg: 20px;
-    --shadow-gold: 0 0 30px rgba(212, 175, 55, 0.25);
-    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --success: #A3C939;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-primary: 0 0 30px rgba(237, 28, 36, 0.2);
+    --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
 
 html {
     scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    /* subtle grain texture */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
 }
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-heading);
+    letter-spacing: 0.5px;
+}
+
 
 a {
     color: inherit;
@@ -294,8 +322,8 @@ a {
 
 .catalog-card:hover {
     transform: translateY(-6px);
-    box-shadow: var(--shadow-gold);
-    border-color: var(--gold);
+    box-shadow: 0 8px 30px rgba(237, 28, 36, 0.2);
+    border-color: var(--primary);
 }
 
 .card-cover {
@@ -333,14 +361,15 @@ a {
     position: absolute;
     top: .75rem;
     right: .75rem;
-    background: var(--gold);
-    color: #000;
+    background: var(--secondary);
+    color: #fff;
     font-size: .65rem;
     font-weight: 800;
     letter-spacing: 1px;
     padding: .25rem .6rem;
     border-radius: 99px;
     text-transform: uppercase;
+    font-family: var(--font-heading);
 }
 
 .card-body {
@@ -412,14 +441,14 @@ a {
 }
 
 .btn-primary {
-    background: var(--gold);
-    color: #000;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
 }
 
 .btn-primary:hover {
-    background: var(--gold-light);
+    opacity: .9;
     transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 4px 20px rgba(237, 28, 36, 0.4);
 }
 
 .btn-outline {
@@ -708,6 +737,39 @@ select.form-control option {
 }
 
 /* Viewer bottom bar */
+/* Zoom controls en el viewer */
+.zoom-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: 1px solid var(--gold-border);
+}
+
+.zoom-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.zoom-level {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 40px;
+    text-align: center;
+    cursor: pointer;
+    font-family: var(--font-heading);
+}
+
+.zoom-level:hover {
+    color: var(--primary-light);
+}
+
 .viewer-bottom {
     background: rgba(5, 5, 8, 0.95);
     border-top: 1px solid var(--gold-border);
@@ -717,6 +779,7 @@ select.form-control option {
     justify-content: space-between;
     gap: 1rem;
 }
+
 
 .thumbnail-strip {
     display: flex;

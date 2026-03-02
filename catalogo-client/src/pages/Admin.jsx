@@ -18,9 +18,12 @@ export default function Admin() {
     const [form, setForm] = useState({ titulo: '', descripcion: '', marca_id: '', temporada_id: '', es_nuevo: false })
     const pdfRef = useRef()
     const portadaRef = useRef()
+    const imagenesRef = useRef()
     const [dragOver, setDragOver] = useState(false)
     const [pdfFile, setPdfFile] = useState(null)
     const [portadaFile, setPortadaFile] = useState(null)
+    const [uploadMode, setUploadMode] = useState('pdf') // 'pdf' | 'imagenes'
+    const [imagenesFiles, setImagenesFiles] = useState([]) // Array de imágenes
 
     const headers = () => ({ Authorization: `Bearer ${getToken()}` })
 
@@ -68,9 +71,34 @@ export default function Admin() {
             const res = await fetch(`${API}/catalogos`, { method: 'POST', headers: headers(), body: fd })
             const data = await res.json()
             if (!res.ok) throw new Error(data.error)
-            showToast('✅ Catálogo subido exitosamente')
+            showToast('✅ Catálogo PDF subido exitosamente')
             setForm({ titulo: '', descripcion: '', marca_id: '', temporada_id: '', es_nuevo: false })
             setPdfFile(null)
+            setPortadaFile(null)
+            fetchAll()
+        } catch (e) {
+            showToast('❌ ' + e.message, 'error')
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    const handleUploadImagenes = async (e) => {
+        e.preventDefault()
+        if (imagenesFiles.length < 2) return showToast('Selecciona al menos 2 imágenes', 'error')
+        if (!form.titulo || !form.marca_id || !form.temporada_id) return showToast('Completa todos los campos requeridos', 'error')
+        setUploading(true)
+        try {
+            const fd = new FormData()
+            imagenesFiles.forEach(f => fd.append('imagenes', f))
+            if (portadaFile) fd.append('portada', portadaFile)
+            Object.entries(form).forEach(([k, v]) => fd.append(k, v))
+            const res = await fetch(`${API}/catalogos/imagenes`, { method: 'POST', headers: headers(), body: fd })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error)
+            showToast(`✅ Catálogo subido con ${imagenesFiles.length} imágenes`)
+            setForm({ titulo: '', descripcion: '', marca_id: '', temporada_id: '', es_nuevo: false })
+            setImagenesFiles([])
             setPortadaFile(null)
             fetchAll()
         } catch (e) {
@@ -142,29 +170,68 @@ export default function Admin() {
                     <>
                         {/* Upload Form */}
                         <div className="glass-card" style={{ marginBottom: '2rem' }}>
-                            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>📤 Subir Nuevo Catálogo</h2>
-                            <form onSubmit={handleUpload}>
-                                {/* Drop zone */}
-                                <div
-                                    className={`upload-zone ${dragOver ? 'dragover' : ''}`}
-                                    style={{ marginBottom: '1.5rem' }}
-                                    onDragOver={e => { e.preventDefault(); setDragOver(true) }}
-                                    onDragLeave={() => setDragOver(false)}
-                                    onDrop={e => {
-                                        e.preventDefault(); setDragOver(false)
-                                        const f = e.dataTransfer.files[0]
-                                        if (f?.type === 'application/pdf') setPdfFile(f)
-                                    }}
-                                    onClick={() => pdfRef.current?.click()}
-                                >
-                                    <div className="upload-icon">📄</div>
-                                    {pdfFile ? (
-                                        <><h3 style={{ color: 'var(--gold)' }}>✅ {pdfFile.name}</h3><p>{(pdfFile.size / 1024 / 1024).toFixed(1)} MB</p></>
-                                    ) : (
-                                        <><h3>Arrastra tu PDF aquí</h3><p>o haz clic para seleccionar un archivo (máx. 200 MB)</p></>
-                                    )}
-                                    <input ref={pdfRef} type="file" accept=".pdf" hidden onChange={e => setPdfFile(e.target.files[0])} />
-                                </div>
+                            <h2 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>📤 Subir Nuevo Catálogo</h2>
+
+                            {/* Toggle PDF / Imágenes */}
+                            <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.5rem' }}>
+                                {['pdf', 'imagenes'].map(mode => (
+                                    <button key={mode} onClick={() => setUploadMode(mode)}
+                                        className={`btn ${uploadMode === mode ? 'btn-primary' : 'btn-ghost'}`}
+                                        style={{ borderRadius: 8, padding: '.5rem 1.25rem' }}>
+                                        {mode === 'pdf' ? '📄 PDF' : '🖼️ Imágenes'}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <form onSubmit={uploadMode === 'pdf' ? handleUpload : handleUploadImagenes}>
+                                {/* Drop zone — PDF o Imágenes según modo */}
+                                {uploadMode === 'pdf' ? (
+                                    <div
+                                        className={`upload-zone ${dragOver ? 'dragover' : ''}`}
+                                        style={{ marginBottom: '1.5rem' }}
+                                        onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+                                        onDragLeave={() => setDragOver(false)}
+                                        onDrop={e => {
+                                            e.preventDefault(); setDragOver(false)
+                                            const f = e.dataTransfer.files[0]
+                                            if (f?.type === 'application/pdf') setPdfFile(f)
+                                        }}
+                                        onClick={() => pdfRef.current?.click()}
+                                    >
+                                        <div className="upload-icon">📄</div>
+                                        {pdfFile ? (
+                                            <><h3 style={{ color: 'var(--primary)' }}>✅ {pdfFile.name}</h3><p>{(pdfFile.size / 1024 / 1024).toFixed(1)} MB</p></>
+                                        ) : (
+                                            <><h3>Arrastra tu PDF aquí</h3><p>o haz clic para seleccionar (máx. 200 MB)</p></>
+                                        )}
+                                        <input ref={pdfRef} type="file" accept=".pdf" hidden onChange={e => setPdfFile(e.target.files[0])} />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className={`upload-zone ${dragOver ? 'dragover' : ''}`}
+                                        style={{ marginBottom: '1.5rem' }}
+                                        onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+                                        onDragLeave={() => setDragOver(false)}
+                                        onDrop={e => {
+                                            e.preventDefault(); setDragOver(false)
+                                            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))
+                                            if (files.length) setImagenesFiles(prev => [...prev, ...files])
+                                        }}
+                                        onClick={() => imagenesRef.current?.click()}
+                                    >
+                                        <div className="upload-icon">🖼️</div>
+                                        {imagenesFiles.length > 0 ? (
+                                            <><h3 style={{ color: 'var(--primary)' }}>✅ {imagenesFiles.length} imagen(es) seleccionadas</h3>
+                                                <p style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>{imagenesFiles.map(f => f.name).join(', ').substring(0, 80)}...</p>
+                                                <button type="button" onClick={e => { e.stopPropagation(); setImagenesFiles([]) }}
+                                                    className="btn btn-danger" style={{ marginTop: '.5rem', padding: '.25rem .75rem', fontSize: '.8rem' }}>Limpiar</button></>
+                                        ) : (
+                                            <><h3>Arrastra tus imágenes aquí</h3><p>Selecciona múltiples JPG, PNG o WEBP (orden alfabético)</p></>
+                                        )}
+                                        <input ref={imagenesRef} type="file" accept="image/*" multiple hidden
+                                            onChange={e => setImagenesFiles(prev => [...prev, ...Array.from(e.target.files)])} />
+                                    </div>
+                                )}
 
                                 <div className="form-grid">
                                     <div className="form-group">

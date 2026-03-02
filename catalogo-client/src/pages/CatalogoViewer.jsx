@@ -20,6 +20,7 @@ export default function CatalogoViewer() {
     const [animDir, setAnimDir] = useState(null) // 'next' | 'prev'
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [zoom, setZoom] = useState(1)
 
     useEffect(() => {
         const fetchCatalogo = async () => {
@@ -64,6 +65,8 @@ export default function CatalogoViewer() {
         const handler = (e) => {
             if (e.key === 'ArrowRight') doFlip('next')
             if (e.key === 'ArrowLeft') doFlip('prev')
+            if (e.key === '+' || e.key === '=') setZoom(z => Math.min(z + 0.25, 2.5))
+            if (e.key === '-') setZoom(z => Math.max(z - 0.25, 0.5))
         }
         window.addEventListener('keydown', handler)
         return () => window.removeEventListener('keydown', handler)
@@ -93,6 +96,11 @@ export default function CatalogoViewer() {
                     {catalogo.marca_nombre && <span style={{ color: 'var(--gold)', marginLeft: '.5rem' }}> — {catalogo.marca_nombre}</span>}
                 </div>
                 <div className="viewer-controls">
+                    {/* Zoom */}
+                    <button className="btn btn-ghost zoom-btn" onClick={() => setZoom(z => Math.max(z - 0.25, 0.5))} title="Alejar (-)">−</button>
+                    <span className="zoom-level" onClick={() => setZoom(1)} title="Click para resetear">{Math.round(zoom * 100)}%</span>
+                    <button className="btn btn-ghost zoom-btn" onClick={() => setZoom(z => Math.min(z + 0.25, 2.5))} title="Acercar (+)">+</button>
+                    <span style={{ width: 1, background: 'var(--gold-border)', height: 20, margin: '0 .5rem' }} />
                     <span>
                         Página {leftPageNum}{rightPageNum <= numPages ? `–${rightPageNum}` : ''} de {numPages || '...'}
                     </span>
@@ -109,7 +117,7 @@ export default function CatalogoViewer() {
                 </button>
 
                 {/* Book */}
-                <div className="book-container">
+                <div className="book-container" style={{ transform: `scale(${zoom})`, transformOrigin: 'center top', transition: 'transform 0.2s ease' }}>
                     <div className="book" style={pageFlipStyle}>
                         {catalogo.pdf_url ? (
                             <Document
