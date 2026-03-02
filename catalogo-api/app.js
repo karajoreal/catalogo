@@ -14,14 +14,12 @@ const app = express();
 
 // CORS
 app.use(cors({
-    origin: [
-        'http://localhost:5174',
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'https://next-catalogo-client.bzupwx.easypanel.host',
-        'https://next-catalogo-api.bzupwx.easypanel.host',
-        'http://82.180.128.1'
-    ],
+    origin: (origin, callback) => {
+        // Aceptar cualquier origen (la seguridad la maneja JWT)
+        callback(null, true);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }));
 

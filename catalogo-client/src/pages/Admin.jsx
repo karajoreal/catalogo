@@ -109,10 +109,19 @@ export default function Admin() {
     }
 
     const handleDelete = async (id) => {
-        if (!confirm('¿Eliminar este catálogo?')) return
-        await fetch(`${API}/catalogos/${id}`, { method: 'DELETE', headers: headers() })
-        showToast('Catálogo eliminado')
-        fetchAll()
+        if (!confirm('¿Eliminar este catálogo? Esta acción no se puede deshacer.')) return
+        try {
+            const res = await fetch(`${API}/catalogos/${id}`, { method: 'DELETE', headers: headers() })
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}))
+                if (res.status === 401) throw new Error('Sesión expirada. Cierra sesión y vuelve a entrar.')
+                throw new Error(data.error || `Error ${res.status}`)
+            }
+            showToast('🗑️ Catálogo eliminado')
+            fetchAll()
+        } catch (e) {
+            showToast('❌ ' + e.message, 'error')
+        }
     }
 
     const handleLogout = () => { logout(); navigate('/admin/login') }
