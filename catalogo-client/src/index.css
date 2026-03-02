@@ -831,21 +831,29 @@ select.form-control option {
 .admin-sidebar {
     width: 220px;
     min-width: 220px;
-    background: #070710;
-    border-right: 1px solid var(--gold-border);
+    background: #FFFFFF;
+    border-right: 3px solid var(--primary);
     display: flex;
     flex-direction: column;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
 }
 
 .admin-logo {
     padding: 1.5rem;
-    border-bottom: 1px solid var(--gold-border);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
 }
 
 .admin-logo h2 {
     font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--gold);
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+}
+
+.admin-logo p {
+    color: rgba(255, 255, 255, 0.75) !important;
 }
 
 .admin-nav {
@@ -894,6 +902,7 @@ select.form-control option {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
+    background: var(--bg);
 }
 
 .admin-header {
