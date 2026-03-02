@@ -117,14 +117,7 @@ export default function CatalogoViewer() {
                 </button>
 
                 {/* Book */}
-                <div
-                    className="book-container"
-                    onWheel={(e) => {
-                        e.preventDefault()
-                        if (e.deltaY < 0) setZoom(z => Math.min(z + 0.15, 3))
-                        else setZoom(z => Math.max(z - 0.15, 0.4))
-                    }}
-                >
+                <div className="book-container">
                     <div className="book" style={pageFlipStyle}>
                         {catalogo.pdf_url ? (
                             <Document
